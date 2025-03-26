@@ -1,0 +1,43 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
+# Sample dataset
+data = {
+    'Area': [750, 800, 850, 900, 950, 1000, 1100, 1200, 1300, 1400],
+    'Bedrooms': [1, 2, 2, 3, 3, 3, 4, 4, 4, 5],
+    'Age': [5, 10, 15, 20, 25, 30, 10, 15, 20, 5],
+    'Price': [35, 45, 50, 55, 65, 70, 85, 90, 100, 120]
+}
+df = pd.DataFrame(data)
+
+# Define independent (X) and dependent (Y) variables
+X = df[['Area', 'Bedrooms', 'Age']]
+Y = df['Price']
+
+# Split dataset into training and testing sets
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+# Train the model
+model = LinearRegression()
+model.fit(X_train, Y_train)
+
+# Predictions
+Y_pred = model.predict(X_test)
+
+# Evaluation metrics
+mae = mean_absolute_error(Y_test, Y_pred)
+mse = mean_squared_error(Y_test, Y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(Y_test, Y_pred)
+
+print("Actual vs Predicted Prices:\n", pd.DataFrame({'Actual': Y_test.values, 'Predicted': Y_pred}))
+print(f"\nMAE: {mae}, MSE: {mse}, RMSE: {rmse}, R² Score: {r2}")
+
+# Predict price for a new house (Area: 1250 sqft, 3 Bedrooms, 10 years old)
+new_house = np.array([[1250, 3, 10]])
+predicted_price = model.predict(new_house)
+print(f"\nPredicted Price for a 1250 sqft house with 3 bedrooms, 10 years old: {predicted_price[0]:.2f} lakhs")
